@@ -113,8 +113,11 @@ class BiliBiliIE(InfoExtractor):
         webpage = self._download_webpage(url, video_id)
 
         if 'anime/' not in url:
+            page_number = int(self._search_regex(
+                r'/\?p=(\d+)$', url, 'page_number', '0'))
+            pattern = r'\bcid(?:["\']:|=)(\d+)' if page_number == 0 else r'\bcid(?:["\']:|=)(\d+),"page":%d' % page_number
             cid = self._search_regex(
-                r'\bcid(?:["\']:|=)(\d+)', webpage, 'cid',
+                pattern, webpage, 'cid',
                 default=None
             ) or compat_parse_qs(self._search_regex(
                 [r'EmbedPlayer\([^)]+,\s*"([^"]+)"\)',
